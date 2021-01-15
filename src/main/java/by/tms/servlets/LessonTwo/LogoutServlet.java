@@ -12,7 +12,22 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getServletContext().getRequestDispatcher("/LogoutServlet.jsp").forward(req, resp);
+
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().invalidate();
-        resp.getWriter().println("Good bye!");
+        req.setAttribute("logoutMessage", "Goodbye!");
+        req.getServletContext().getRequestDispatcher("/LogoutServlet.jsp").forward(req, resp);
+
+
+
+
+
+
     }
 }
+

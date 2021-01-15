@@ -7,10 +7,12 @@ public class InMemoryUserStorage {
     public static List<User> users = new ArrayList<>();
     static int userId = 1;
 
-    public void addUser(User user) {
+    public boolean save(User user){
+        if (users.contains(user)) {
+            return false;
+        }
         users.add(user);
-        user.setId(userId);
-        userId++;
+        return true;
     }
 
     public User getByLogin (String login) {

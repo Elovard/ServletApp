@@ -14,24 +14,35 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        getServletContext().getRequestDispatcher("/RegistrationServlet.jsp").forward(req, resp);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
         String login = req.getParameter("login");
         String password = req.getParameter("password");
 
-        if (name != null && login != null && password != null) {   // && - и, || - или
-            if (login.length() >= 4) {
-                if (password.length() >= 4) {
-                    User user = new User(name, login, password);
-                    inMemoryUserStorage.addUser(user);
-                    resp.getWriter().println("Thank you for your registration! Enjoy!");
-                } else {
-                    resp.getWriter().println("Your password is too short! (min 4 symbols)");
-                }
-            } else {
-                resp.getWriter().println("Your login is too short! (min 4 symbols)");
-            }
-        } else {
-            resp.getWriter().println("Fields NAME, LOGIN and PASSWORD are must!");
+        if (login.length() < 3) {
+            req.setAttribute("messageShortLog", "Your login is too short! (min 3 symbols)");
+            getServletContext().getRequestDispatcher("/RegistrationServlet.jsp").forward(req, resp);
+        } else if (password.length() < 4) {
+            req.setAttribute("messageShortPass", "Your password is too short! (min 4 symbols)");
+            getServletContext().getRequestDispatcher("/RegistrationServlet.jsp").forward(req, resp);
         }
+
+        User user = new User(name, login, password);
+        boolean save = inMemoryUserStorage.save(user);
+        if (save) {
+//            resp.sendRedirect("/");
+//            req.setAttribute("messageSuccessReg", "You are ok");
+            req.setAttribute("messageSuccessReg", "You've successfully registered!");
+            getServletContext().getRequestDispatcher("/AuthorizationServlet.jsp").forward(req, resp);
+        } else {
+            req.setAttribute("messageExist", "User is exist!");
+            getServletContext().getRequestDispatcher("/RegistrationServlet.jsp").forward(req, resp);
+        }
+
     }
 }

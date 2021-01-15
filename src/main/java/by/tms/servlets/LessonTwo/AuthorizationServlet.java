@@ -15,19 +15,31 @@ public class AuthorizationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        getServletContext().getRequestDispatcher("/AuthorizationServlet.jsp").forward(req, resp);
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         User byLogin = inMemoryUserStorage.getByLogin(login);
+
         if (byLogin != null) {
             if (byLogin.getPassword().equals(password)) {
-                req.getSession().setAttribute("user", byLogin);  // success
-                resp.getWriter().println("Welcome back, " + byLogin.getName() + "!");
+                req.getSession().setAttribute("user", byLogin);
+                req.setAttribute("messageHomeReg", "Welcome back, dear " + byLogin.getName());
+                getServletContext().getRequestDispatcher("/Home.jsp").forward(req, resp);
+
 
             } else {
-                resp.getWriter().println("Error! Wrong password!");
+                req.setAttribute("messageWrongPassword", "Error! Wrong Password!");
+                getServletContext().getRequestDispatcher("/AuthorizationServlet.jsp").forward(req, resp);
             }
         } else {
-            resp.getWriter().println("Error! You are not registered here! (user is not found)");
+            req.setAttribute("messageNotRegistered", " Error! You are not registered here! (user is not found)");
+            getServletContext().getRequestDispatcher("/AuthorizationServlet.jsp").forward(req, resp);
         }
     }
 }
+
