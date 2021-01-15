@@ -2,6 +2,7 @@ package by.tms.servlets.LessonOne;
 
 import by.tms.servlets.LessonOne.Calculator;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +19,10 @@ public class HomeServlet extends HttpServlet {
         int secondNum = Integer.parseInt(req.getParameter("secondNum"));
         String operation = req.getParameter("operation").toLowerCase(Locale.ROOT).trim();
         Calculator calculator = new Calculator();
-        resp.getWriter().println(calculator.operation(firstNum, secondNum, operation));
+        calculator.operation(firstNum, secondNum, operation);
+
     }
+
 }
 
 // http://localhost:8080/calculator?firstNum=10&secondNum=30&operation=sum
